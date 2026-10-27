@@ -11,6 +11,7 @@ HRESULT DX12Renderer::Initialize(DX12Device* device, DX12CommandQueue* commandQu
 		return E_INVALIDARG;
 	}
 
+	_device = device;
 	_commandQueue = commandQueue;
 	_swapChain = swapChain;
 
@@ -41,6 +42,80 @@ HRESULT DX12Renderer::Initialize(DX12Device* device, DX12CommandQueue* commandQu
 		return hr;
 	}
 	_commandList->Close();
+
+
+	D3D12_DESCRIPTOR_HEAP_DESC DepthDesc = {};
+	DepthDesc.NumDescriptors = 1;
+	DepthDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
+	DepthDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+	hr = device->GetDevice()->CreateDescriptorHeap(&DepthDesc, IID_PPV_ARGS(&_depthStencilHeap));
+	if (FAILED(hr))
+	{
+		return hr;
+	}
+
+	hr = CreateDepthBuffer(_swapChain->GetDesc().width, _swapChain->GetDesc().height);
+	if (FAILED(hr))
+	{
+		return hr;
+	}
+
+	return S_OK;
+}
+
+HRESULT DX12Renderer::Resize(UINT width, UINT height)
+{
+	return CreateDepthBuffer(width, height);
+}
+
+HRESULT DX12Renderer::CreateDepthBuffer(UINT width, UINT height)
+{
+	D3D12_HEAP_PROPERTIES heapProps = {};
+	heapProps.Type = D3D12_HEAP_TYPE_DEFAULT;
+
+	D3D12_RESOURCE_DESC resourceDesc = {};
+	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+	resourceDesc.Width = width;
+	resourceDesc.Height = height;
+	resourceDesc.DepthOrArraySize = 1;
+	resourceDesc.MipLevels = 1;
+	resourceDesc.Format = DepthStencilFormat;
+	resourceDesc.SampleDesc.Count = 1;
+	resourceDesc.SampleDesc.Quality = 0;
+	resourceDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
+	resourceDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
+
+	D3D12_CLEAR_VALUE clearValue = {};
+	clearValue.Format = DepthStencilFormat;
+	clearValue.DepthStencil.Depth = 1.0f;
+	clearValue.DepthStencil.Stencil = 0;
+
+	_depthStencilBuffer.Reset();
+
+	HRESULT hr = _device->GetDevice()->CreateCommittedResource(
+		&heapProps,
+		D3D12_HEAP_FLAG_NONE,
+		&resourceDesc,
+		D3D12_RESOURCE_STATE_DEPTH_WRITE,
+		&clearValue,
+		IID_PPV_ARGS(&_depthStencilBuffer)
+	);
+	if (FAILED(hr))
+	{
+		return hr;
+	}
+
+	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc = {};
+	dsvDesc.Format = DepthStencilFormat;
+	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
+	dsvDesc.Flags = D3D12_DSV_FLAG_NONE;
+
+	_device->GetDevice()->CreateDepthStencilView(
+		_depthStencilBuffer.Get(),
+		&dsvDesc,
+		_depthStencilHeap->GetCPUDescriptorHandleForHeapStart()
+	);
+
 	return S_OK;
 }
 
@@ -90,12 +165,13 @@ HRESULT DX12Renderer::BeginFrame(ID3D12DescriptorHeap* descriptorHeap)
 	_commandList->ResourceBarrier(1, &barrier);
 
 	D3D12_CPU_DESCRIPTOR_HANDLE rtv = _swapChain->GetRTV(_currentFrameIndex);
+	D3D12_CPU_DESCRIPTOR_HANDLE dsv = _depthStencilHeap->GetCPUDescriptorHandleForHeapStart();
 
-	_commandList->OMSetRenderTargets(1, &rtv, FALSE, nullptr);
+	_commandList->OMSetRenderTargets(1, &rtv, FALSE, &dsv);
 
 	const float clearColor[] = { 0.0f, 0.2f, 0.4f, 1.0f };
 	_commandList->ClearRenderTargetView(rtv, clearColor, 0, nullptr);
-	//_commandList->ClearDepthStencilView
+	_commandList->ClearDepthStencilView(dsv, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
 	D3D12_VIEWPORT viewport = {};
 	viewport.TopLeftX = 0.0f;

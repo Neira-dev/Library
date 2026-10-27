@@ -44,11 +44,32 @@ public:
 	 * @return ID3D12GraphicsCommandList*
 	 */
 	ID3D12GraphicsCommandList* GetCommandList() const { return _commandList.Get(); }
+
+	/**
+	 * @brief 深度バッファをリサイズする
+	 * @param width
+	 * @param height
+	 * @return
+	 */
+	HRESULT Resize(UINT width, UINT height);
 protected:
+	/**
+	 * @brief 深度バッファを作成する
+	 * @param width
+	 * @param height
+	 * @return
+	 */
+	HRESULT CreateDepthBuffer(UINT width, UINT height);
+protected:
+	DX12Device* _device = nullptr;
 	DX12CommandQueue* _commandQueue = nullptr;
 	DX12SwapChain* _swapChain = nullptr;
 	std::vector < FrameContext* > _frameContexts;
 	UINT _currentFrameIndex = 0;
 	UINT _currentFrameContextIndex = 0;
 	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> _commandList;
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> _depthStencilHeap;
+	Microsoft::WRL::ComPtr<ID3D12Resource> _depthStencilBuffer;
+
+	static constexpr DXGI_FORMAT DepthStencilFormat = DXGI_FORMAT_D32_FLOAT;
 };
