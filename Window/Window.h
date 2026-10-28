@@ -10,7 +10,7 @@ class Window
 public:
 	struct WindowClass {
 		LPCWSTR className = L"WindowClass";
-		UINT style = CS_CLASSDC | BN_DBLCLK;
+		UINT style = CS_CLASSDC | CS_DBLCLKS;
 		HICON hIcon = nullptr;
 		HICON hIconSm = nullptr;
 		HCURSOR hCursor = nullptr;

@@ -128,6 +128,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Descriptor.cpp" />
+    <ClCompile Include="DX12CommandQueue.cpp" />
     <ClCompile Include="DX12Device.cpp" />
     <ClCompile Include="DX12Renderer.cpp" />
     <ClCompile Include="DX12SwapChain.cpp" />
