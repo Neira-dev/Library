@@ -1,6 +1,7 @@
 #include "Window.h"
 
 Window::Window(WindowDesc desc)
+	: _hWnd(nullptr)
 {
 	WNDCLASSEX wcex = {};
 	wcex.cbSize = sizeof(WNDCLASSEX);
@@ -53,7 +54,6 @@ Window::Window(WindowDesc desc)
 	UpdateWindow(_hWnd);
 
 	_desc = desc;
-	_mainWindowInstance = this;
 }
 
 Window::~Window()

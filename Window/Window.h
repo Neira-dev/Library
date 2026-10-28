@@ -49,7 +49,4 @@ public:
 protected:
 	HWND _hWnd; // ウィンドウハンドル
 	WindowDesc _desc; // ウィンドウの設定情報
-private:
-	// メインウインドウのポインターを保持するメンバ変数
-	static Window* _mainWindowInstance;
 };
