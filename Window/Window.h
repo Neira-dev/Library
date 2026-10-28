@@ -2,6 +2,9 @@
 
 #include <Windows.h>
 #include <string>
+#include <functional>
+#include <vector>
+
 class Window
 {
 public:
@@ -23,16 +26,29 @@ public:
 
 	struct WindowDesc
 	{
-		HINSTANCE hInstance;
+		HINSTANCE hInstance = nullptr;
 		int nCmdShow;
 		UINT width = 800;
 		UINT height = 600;
-		WindowClass windowClass;
-		WindowSettings windowSettings;
+		WindowClass windowClass = {};
+		WindowSettings windowSettings = {};
 	};
+
+	/**
+	 * @brief メッセージハンドラ
+	 * @details trueを返すと以降のデフォルト処理をスキップする。falseを返すと通常のWndProcの処理に続けて渡される。
+	 */
+	using MessageHandler = std::function<bool(HWND, UINT, WPARAM, LPARAM, LRESULT&)>;
+
+	/**
+	 * @brief ウィンドウプロシージャ
+	 * @details 継承先でoverrideすることで既定の処理を置き換えられる
+	 */
+	virtual LRESULT WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+
 public:
 	Window(WindowDesc desc);
-	~Window();
+	virtual ~Window();
 
 	/**
 	 * @brief メインウィンドウのポインターを取得する
@@ -46,7 +62,27 @@ public:
 	 */
 	WindowDesc GetDesc() const { return _desc; }
 
+	/**
+	 * @brief メッセージハンドラを追加する
+	 * @param handler 追加するハンドラ
+	 * @return Window&
+	 */
+	Window& operator+=(MessageHandler handler);
+
+protected:
+	/**
+	 * @brief ウインドウ作成を行う 
+	 */
+	virtual void OnCreate();
+
+	/**
+	 * @brief WinAPIに登録する静的ウィンドウプロシージャ
+	 * @details GWLP_USERDATAからthisを復元し、仮想WndProcへ処理を委譲する
+	 */
+	static LRESULT CALLBACK StaticWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+
 protected:
 	HWND _hWnd; // ウィンドウハンドル
 	WindowDesc _desc; // ウィンドウの設定情報
+	std::vector<MessageHandler> _messageHandlers; // += で追加されたメッセージハンドラ
 };

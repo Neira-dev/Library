@@ -1,13 +1,68 @@
 #include "Window.h"
 
+LRESULT CALLBACK Window::StaticWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	Window* self = nullptr;
+
+	if (message == WM_NCCREATE)
+	{
+		CREATESTRUCT* cs = reinterpret_cast<CREATESTRUCT*>(lParam);
+		self = reinterpret_cast<Window*>(cs->lpCreateParams);
+		SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(self));
+		self->_hWnd = hWnd;
+	}
+	else
+	{
+		self = reinterpret_cast<Window*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+	}
+
+	if (self != nullptr)
+	{
+		return self->WndProc(hWnd, message, wParam, lParam);
+	}
+
+	return DefWindowProc(hWnd, message, wParam, lParam);
+}
+
+LRESULT Window::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	LRESULT result = 0;
+	for (auto& handler : _messageHandlers)
+	{
+		if (handler(hWnd, message, wParam, lParam, result))
+		{
+			return result;
+		}
+	}
+
+	switch (message)
+	{
+	case WM_DESTROY:
+		PostQuitMessage(0);
+		break;
+	default:
+		return DefWindowProc(hWnd, message, wParam, lParam);
+	}
+	return 0;
+}
+
+Window& Window::operator+=(MessageHandler handler)
+{
+	_messageHandlers.push_back(std::move(handler));
+	return *this;
+}
+
 Window::Window(WindowDesc desc)
 	: _hWnd(nullptr)
 {
+	_desc = desc;
+
 	WNDCLASSEX wcex = {};
 	wcex.cbSize = sizeof(WNDCLASSEX);
 	wcex.hInstance = desc.hInstance;
 	wcex.lpszClassName = desc.windowClass.className;
 	wcex.style = desc.windowClass.style;
+	wcex.lpfnWndProc = StaticWndProc;
 
 	if (desc.windowClass.hIcon == nullptr)
 		wcex.hIcon = LoadIcon(nullptr, IDI_APPLICATION);
@@ -32,18 +87,8 @@ Window::Window(WindowDesc desc)
 		return;
 	}
 
+	OnCreate();
 
-	RECT rc = { 0,0, desc.width, desc.height };
-	AdjustWindowRectEx(&rc, desc.windowSettings.style, false, desc.windowSettings.exStyle);
-
-	_hWnd = CreateWindowEx(
-		desc.windowSettings.exStyle,
-		desc.windowClass.className,
-		desc.windowSettings.title,
-		desc.windowSettings.style,
-		CW_USEDEFAULT, CW_USEDEFAULT,
-		rc.right - rc.left, rc.bottom - rc.top,
-		HWND_DESKTOP, NULL, desc.hInstance, nullptr);
 	if(_hWnd == nullptr)
 	{
 		MessageBox(nullptr, L"ウィンドウの作成に失敗しました。", L"エラー", MB_OK | MB_ICONERROR);
@@ -52,8 +97,6 @@ Window::Window(WindowDesc desc)
 
 	ShowWindow(_hWnd, desc.nCmdShow);
 	UpdateWindow(_hWnd);
-
-	_desc = desc;
 }
 
 Window::~Window()
@@ -61,3 +104,17 @@ Window::~Window()
 
 }
 
+void Window::OnCreate()
+{
+	RECT rc = { 0, 0, static_cast<LONG>(_desc.width), static_cast<LONG>(_desc.height) };
+	AdjustWindowRectEx(&rc, _desc.windowSettings.style, false, _desc.windowSettings.exStyle);
+
+	_hWnd = CreateWindowEx(
+		_desc.windowSettings.exStyle,
+		_desc.windowClass.className,
+		_desc.windowSettings.title,
+		_desc.windowSettings.style,
+		CW_USEDEFAULT, CW_USEDEFAULT,
+		rc.right - rc.left, rc.bottom - rc.top,
+		HWND_DESKTOP, NULL, _desc.hInstance, this);
+}
