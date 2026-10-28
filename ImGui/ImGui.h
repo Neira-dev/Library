@@ -1,8 +1,18 @@
 #pragma once
-class ImGui
+
+
+class ImGuiLayer
 {
 public:
-	ImGui();
-	~ImGui();
+	ImGuiLayer();
+	~ImGuiLayer();
+
+	/**
+	 * @brief ‰Šú‰»ˆ— 
+	 */
+	void Initialize();
+
+protected:
+
 };
 
