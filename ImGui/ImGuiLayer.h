@@ -63,9 +63,11 @@ public:
 
 	/**
 	 * @brief Win32 のメッセージを ImGui に渡す
+	 * @details Window::MessageHandler と同じシグネチャなので window.AddWndProc(ImGuiLayer::WndProcHandler) で登録できる
+	 * @param result ImGui が処理した場合の WndProc の戻り値
 	 * @return ImGui がメッセージを処理した場合は true
 	 */
-	static bool WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+	static bool WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam, LRESULT& result);
 
 private:
 	HRESULT CreateSrvHeap(ID3D12Device* device, UINT capacity);

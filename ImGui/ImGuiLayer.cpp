@@ -89,9 +89,10 @@ void ImGuiLayer::EndFrame(ID3D12GraphicsCommandList* commandList)
 	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList);
 }
 
-bool ImGuiLayer::WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+bool ImGuiLayer::WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam, LRESULT& result)
 {
-	return ImGui_ImplWin32_WndProcHandler(hwnd, msg, wParam, lParam) != 0;
+	result = ImGui_ImplWin32_WndProcHandler(hwnd, msg, wParam, lParam);
+	return result != 0;
 }
 
 HRESULT ImGuiLayer::CreateSrvHeap(ID3D12Device* device, UINT capacity)
