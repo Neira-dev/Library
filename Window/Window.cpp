@@ -46,7 +46,7 @@ LRESULT Window::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
-Window& Window::operator+=(MessageHandler handler)
+Window& Window::AddWndProc(MessageHandler handler)
 {
 	_messageHandlers.push_back(std::move(handler));
 	return *this;

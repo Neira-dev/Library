@@ -63,11 +63,19 @@ public:
 	WindowDesc GetDesc() const { return _desc; }
 
 	/**
-	 * @brief メッセージハンドラを追加する
+	 * @brief WndProc に処理を追加する
+	 * @details 追加した順に呼ばれ、trueを返したハンドラ以降の処理はスキップされる
 	 * @param handler 追加するハンドラ
 	 * @return Window&
 	 */
-	Window& operator+=(MessageHandler handler);
+	Window& AddWndProc(MessageHandler handler);
+
+	/**
+	 * @brief メッセージハンドラを追加する（AddWndProc と同じ）
+	 * @param handler 追加するハンドラ
+	 * @return Window&
+	 */
+	Window& operator+=(MessageHandler handler) { return AddWndProc(std::move(handler)); }
 
 protected:
 	/**
