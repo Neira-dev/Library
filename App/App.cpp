@@ -6,6 +6,8 @@
 #include "../DirectX12/DX12SwapChain.h"
 #include "../DirectX12/DX12Renderer.h"
 
+#include "../ImGui/ImGuiLayer.h"
+
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	Window::WindowDesc desc;
@@ -37,6 +39,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	DX12Renderer renderer;
 	renderer.Initialize(&device, &commandQueue, &swapChain);
 
+	ImGuiLayer imGuiLayer;
+	imGuiLayer.Initialize({ window.GetHwnd(), device.GetDevice(), commandQueue.GetCommandQueue(), swapChain.GetBufferCount(), DXGI_FORMAT_R8G8B8A8_UNORM, 64 });
+	window.AddWndProc(ImGuiLayer::WndProcHandler);
+
 	MSG msg;
 	while (GetMessage(&msg, nullptr, 0, 0))
 	{
@@ -45,12 +51,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 		// ï`âÊèàóù
 		renderer.BeginFrame(descriptor.GetDescriptorHeap());
+		imGuiLayer.BeginFrame();
+	
+		ImGui::Begin("Hello, ImGui!");
+		ImGui::Text("This is some useful text.");
+		ImGui::End();
+		
 
-
+		imGuiLayer.EndFrame(renderer.GetCommandList());
 		renderer.EndFrame();
 	}
 
-
+	imGuiLayer.Shutdown();
 	renderer.Release();
 	return (int)msg.wParam;
 }
