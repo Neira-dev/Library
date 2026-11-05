@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include <string>
 #include <vector>
 #include <map>
 #include <d3d12.h>
@@ -36,11 +37,19 @@ public: // Singleton pattern
 	static void DestroySingleton();
 public:
 
+	/**
+	 * @brief　TextureDataを追加する 
+	 * @param Name 登録名
+	 * @param InTexturedata テクスチャデータ
+	 * @return 追加結果
+	 */
+	bool AddTextureData(std::string Name, TextureCpuData InTexturedata);
 
 
 
-
-
+protected:
+	// テクスチャのCPU側データを格納するためのマップ
+	std::map<std::string, TextureCpuData> _textureDataMap;
 private:
 	TextureManager() = default;
 	~TextureManager() = default;
