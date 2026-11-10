@@ -33,5 +33,8 @@
     <FxCompile Include="VS_Default.hlsl">
       <Filter>シェーダー</Filter>
     </FxCompile>
+    <FxCompile Include="PS_Default.hlsl">
+      <Filter>シェーダー</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
