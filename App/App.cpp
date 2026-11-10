@@ -1,5 +1,5 @@
 #include "App.h"
-
+#include "Scene.h"
 #include "../ImGui/ImGuiLayer.h"
 
 Window* g_window = nullptr;
@@ -43,15 +43,23 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	imGuiLayer.Initialize({ g_window->GetHwnd(), g_device->GetDevice(), g_commandQueue->GetCommandQueue(), g_swapChain->GetBufferCount(), DXGI_FORMAT_R8G8B8A8_UNORM, 64 });
 	g_window->AddWndProc(ImGuiLayer::WndProcHandler);	
 	MSG msg;
+
+	Scene* scene = new Scene();
+	scene->Initialize();
+
 	while (GetMessage(&msg, nullptr, 0, 0))
 	{
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 
+		scene->Update();
+
 		// •`‰æˆ—
 		g_renderer->BeginFrame(g_descriptor->GetDescriptorHeap());
 		imGuiLayer.BeginFrame();
 	
+
+		scene->Render();
 		ImGui::Begin("Hello, ImGui!");
 		ImGui::Text("This is some useful text.");
 		ImGui::End();
@@ -60,9 +68,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		imGuiLayer.EndFrame(g_renderer->GetCommandList());
 		g_renderer->EndFrame();
 	}
-
+	scene->UnLoad();
 	imGuiLayer.Shutdown();
 	g_renderer->Release();
+
+
+	delete scene;
+	scene = nullptr;
 
 	delete g_renderer;
 	g_renderer = nullptr;
