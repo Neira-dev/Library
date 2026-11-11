@@ -1,4 +1,11 @@
-float4 main( float4 pos : POSITION ) : SV_POSITION
+struct VSOutput
 {
-	return pos;
+    float4 position : SV_POSITION;
+};
+
+VSOutput main(float3 position : POSITION)
+{
+    VSOutput output;
+    output.position = float4(position, 1.0);
+    return output;
 }
