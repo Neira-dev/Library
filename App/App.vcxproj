@@ -143,6 +143,9 @@
     <ProjectReference Include="..\ImGui\ImGui.vcxproj">
       <Project>{87e243f2-491f-4191-93cb-e8a244245d51}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\CapsuleAssetProtector\CapsuleAssetProtector.vcxproj">
+      <Project>{b15c2788-4b64-4430-b858-f878b552ab7f}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

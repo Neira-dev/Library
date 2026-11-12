@@ -11,6 +11,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "App", "App\App.vcxproj", "{
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ImGui", "ImGui\ImGui.vcxproj", "{87E243F2-491F-4191-93CB-E8A244245D51}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CapsuleAssetProtector", "CapsuleAssetProtector\CapsuleAssetProtector.vcxproj", "{B15C2788-4B64-4430-B858-F878B552AB7F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -51,6 +53,14 @@ Global
 		{87E243F2-491F-4191-93CB-E8A244245D51}.Release|x64.Build.0 = Release|x64
 		{87E243F2-491F-4191-93CB-E8A244245D51}.Release|x86.ActiveCfg = Release|Win32
 		{87E243F2-491F-4191-93CB-E8A244245D51}.Release|x86.Build.0 = Release|Win32
+		{B15C2788-4B64-4430-B858-F878B552AB7F}.Debug|x64.ActiveCfg = Debug|x64
+		{B15C2788-4B64-4430-B858-F878B552AB7F}.Debug|x64.Build.0 = Debug|x64
+		{B15C2788-4B64-4430-B858-F878B552AB7F}.Debug|x86.ActiveCfg = Debug|Win32
+		{B15C2788-4B64-4430-B858-F878B552AB7F}.Debug|x86.Build.0 = Debug|Win32
+		{B15C2788-4B64-4430-B858-F878B552AB7F}.Release|x64.ActiveCfg = Release|x64
+		{B15C2788-4B64-4430-B858-F878B552AB7F}.Release|x64.Build.0 = Release|x64
+		{B15C2788-4B64-4430-B858-F878B552AB7F}.Release|x86.ActiveCfg = Release|Win32
+		{B15C2788-4B64-4430-B858-F878B552AB7F}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
