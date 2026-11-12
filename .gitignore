@@ -361,3 +361,5 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+# CapsuleAssetProtector: assimpのビルド出力(BuildAssimp.batで再生成される)
+CapsuleAssetProtector/External/build/
