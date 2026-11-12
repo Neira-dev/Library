@@ -132,6 +132,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
+    <ClCompile Include="Entry.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DirectX12\DirectX12.vcxproj">
@@ -146,6 +147,9 @@
     <ProjectReference Include="..\CapsuleAssetProtector\CapsuleAssetProtector.vcxproj">
       <Project>{b15c2788-4b64-4430-b858-f878b552ab7f}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="App.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
