@@ -27,6 +27,6 @@ private:
 	std::unique_ptr<DX12CommandQueue> _CommandQueue;
 	std::unique_ptr<DX12SwapChain> _SwapChain;
 	std::unique_ptr<DX12Renderer> _Renderer;
-	ImGuiLayer* _ImGuiLayer;
+	std::unique_ptr<ImGuiLayer> _ImGuiLayer;
 };
 

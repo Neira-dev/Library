@@ -26,6 +26,8 @@ void App::Init(HINSTANCE hInstance, int nCmdShow)
 	Window::WindowDesc wDesc;
 	wDesc.hInstance = hInstance;
 	wDesc.nCmdShow = nCmdShow;
+	wDesc.height = 720;
+	wDesc.width = 1280;
 	_Window = std::make_unique<Window>(wDesc);
 
 	// Device�̍쐬
@@ -58,7 +60,7 @@ void App::Init(HINSTANCE hInstance, int nCmdShow)
 	_Renderer->Initialize(_Device.get(), _CommandQueue.get(), _SwapChain.get());
 
 	// ImGuiLayer�̍쐬
-	_ImGuiLayer = new ImGuiLayer();
+	_ImGuiLayer = std::make_unique<ImGuiLayer>();
 	_ImGuiLayer->Initialize({ _Window->GetHwnd(), _Device->GetDevice(), _CommandQueue->GetCommandQueue(), 2, DXGI_FORMAT_R8G8B8A8_UNORM, 64 });
 	_Window->AddWndProc(_ImGuiLayer->WndProcHandler);
 
@@ -72,7 +74,6 @@ void App::Init(HINSTANCE hInstance, int nCmdShow)
 	desc.allocateSrv = [](void* user) -> uint32_t { return static_cast<Descriptor*>(user)->Allocate(); };
 	desc.freeSrv = [](void* user, uint32_t index) { static_cast<Descriptor*>(user)->Free(index); };
 	CapsuleAssetProtector::Initialize(desc);
-
 }
 
 void App::Update()
@@ -94,9 +95,5 @@ void App::Render()
 
 void App::UnLoad()
 {
-	_ImGuiLayer->Shutdown();
-	delete _ImGuiLayer;
-	_ImGuiLayer = nullptr;
-
 	_Renderer->Release();
 }
