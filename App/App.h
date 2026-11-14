@@ -13,8 +13,8 @@ class ImGuiLayer;
 class App
 {
 public:
-	App() = default;
-	~App() = default;
+	App();
+	~App();
 public:
 	void Init(HINSTANCE hInstance,int nCmdShow);
 	void Update();
@@ -27,6 +27,6 @@ private:
 	std::unique_ptr<DX12CommandQueue> _CommandQueue;
 	std::unique_ptr<DX12SwapChain> _SwapChain;
 	std::unique_ptr<DX12Renderer> _Renderer;
-	std::unique_ptr<ImGuiLayer> _ImGuiLayer;
+	ImGuiLayer* _ImGuiLayer;
 };
 

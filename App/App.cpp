@@ -12,6 +12,14 @@
 
 #include "../CapsuleAssetProtector/CapsuleAssetProtector.h"
 
+App::App()
+{
+}
+
+App::~App()
+{
+}
+
 void App::Init(HINSTANCE hInstance, int nCmdShow)
 {
 	// ウインドウの作成
@@ -50,7 +58,7 @@ void App::Init(HINSTANCE hInstance, int nCmdShow)
 	_Renderer->Initialize(_Device.get(), _CommandQueue.get(), _SwapChain.get());
 
 	// ImGuiLayerの作成
-	_ImGuiLayer = std::make_unique<ImGuiLayer>();
+	_ImGuiLayer = new ImGuiLayer();
 	_ImGuiLayer->Initialize({ _Window->GetHwnd(), _Device->GetDevice(), _CommandQueue->GetCommandQueue(), 2, DXGI_FORMAT_R8G8B8A8_UNORM, 64 });
 	_Window->AddWndProc(_ImGuiLayer->WndProcHandler);
 
@@ -86,4 +94,9 @@ void App::Render()
 
 void App::UnLoad()
 {
+	_ImGuiLayer->Shutdown();
+	delete _ImGuiLayer;
+	_ImGuiLayer = nullptr;
+
+	_Renderer->Release();
 }
